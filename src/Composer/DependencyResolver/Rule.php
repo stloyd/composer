@@ -33,6 +33,7 @@ class Rule
 
     protected $disabled;
     protected $literals;
+    protected $literalsCount;
     protected $type;
     protected $id;
 
@@ -48,6 +49,7 @@ class Rule
         sort($literals);
 
         $this->literals = $literals;
+        $this->literalsCount = count($literals);
         $this->reason = $reason;
         $this->reasonData = $reasonData;
 
@@ -90,16 +92,16 @@ class Rule
      */
     public function equals(Rule $rule)
     {
-        if ($this->ruleHash !== $rule->ruleHash) {
+        if ($this->ruleHash !== $rule->getHash()) {
             return false;
         }
 
-        if (count($this->literals) != count($rule->literals)) {
+        if ($this->literalsCount !== $rule->getLiteralsCount()) {
             return false;
         }
 
-        for ($i = 0, $n = count($this->literals); $i < $n; $i++) {
-            if ($this->literals[$i] !== $rule->literals[$i]) {
+        for ($i = 0, $n = $this->literalsCount; $i < $n; $i++) {
+            if ($this->literals[$i] !== $rule->getLiteral($i)) {
                 return false;
             }
         }
@@ -137,14 +139,24 @@ class Rule
         return !$this->disabled;
     }
 
+    public function getLiteral($key)
+    {
+        return $this->literals[$key];
+    }
+
     public function getLiterals()
     {
         return $this->literals;
     }
 
+    public function getLiteralsCount()
+    {
+        return $this->literalsCount;
+    }
+
     public function isAssertion()
     {
-        return 1 === count($this->literals);
+        return 1 === $this->literalsCount;
     }
 
     public function getPrettyString(array $installedMap = array())

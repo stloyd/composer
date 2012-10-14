@@ -43,7 +43,7 @@ class Transaction
         $installMap = array();
         $uninstallMap = array();
 
-        foreach ($this->decisions as $i => $decision) {
+        foreach ($this->decisions as $decision) {
             $literal = $decision[Decisions::DECISION_LITERAL];
             $reason = $decision[Decisions::DECISION_REASON];
 
@@ -56,7 +56,6 @@ class Transaction
 
             if ($literal > 0) {
                 if (isset($installMeansUpdateMap[abs($literal)]) && !$package instanceof AliasPackage) {
-
                     $source = $installMeansUpdateMap[abs($literal)];
 
                     $updateMap[$package->getId()] = array(
@@ -77,7 +76,7 @@ class Transaction
             }
         }
 
-        foreach ($this->decisions as $i => $decision) {
+        foreach ($this->decisions as $decision) {
             $literal = $decision[Decisions::DECISION_LITERAL];
             $package = $this->pool->literalToPackage($literal);
 
@@ -179,7 +178,7 @@ class Transaction
     {
         $installMeansUpdateMap = array();
 
-        foreach ($this->decisions as $i => $decision) {
+        foreach ($this->decisions as $decision) {
             $literal = $decision[Decisions::DECISION_LITERAL];
             $package = $this->pool->literalToPackage($literal);
 
@@ -211,7 +210,8 @@ class Transaction
     protected function install($package, $reason)
     {
         if ($package instanceof AliasPackage) {
-            return $this->markAliasInstalled($package, $reason);
+            $this->markAliasInstalled($package, $reason);
+            return;
         }
 
         $this->transaction[] = new Operation\InstallOperation($package, $reason);
@@ -225,7 +225,8 @@ class Transaction
     protected function uninstall($package, $reason)
     {
         if ($package instanceof AliasPackage) {
-            return $this->markAliasUninstalled($package, $reason);
+            $this->markAliasUninstalled($package, $reason);
+            return;
         }
 
         $this->transaction[] = new Operation\UninstallOperation($package, $reason);

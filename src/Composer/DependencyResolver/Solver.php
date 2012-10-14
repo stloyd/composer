@@ -28,6 +28,7 @@ class Solver
     protected $rules;
     protected $ruleSetGenerator;
     protected $updateAll;
+    protected $jobs;
 
     protected $addedMap = array();
     protected $updateMap = array();
@@ -35,10 +36,11 @@ class Solver
     protected $decisions;
     protected $installedMap;
 
-    protected $propagateIndex;
+    protected $propagateIndex = 0;
     protected $branches = array();
     protected $problems = array();
     protected $learnedPool = array();
+    protected $learnedWhy = array();
 
     public function __construct(PolicyInterface $policy, Pool $pool, RepositoryInterface $installed)
     {
@@ -61,8 +63,7 @@ class Solver
                 continue;
             }
 
-            $literals = $rule->getLiterals();
-            $literal = $literals[0];
+            $literal = current($rule->getLiterals());
 
             if (!$this->decisions->decided(abs($literal))) {
                 $this->decisions->decide($literal, 1, $rule);
@@ -81,21 +82,15 @@ class Solver
 
             $conflict = $this->decisions->decisionRule($literal);
 
+            $problem = new Problem;
+            $problem->addRule($rule);
+            $problem->addRule($conflict);
+
             if ($conflict && RuleSet::TYPE_PACKAGE === $conflict->getType()) {
-
-                $problem = new Problem;
-
-                $problem->addRule($rule);
-                $problem->addRule($conflict);
                 $this->disableProblem($rule);
                 $this->problems[] = $problem;
                 continue;
             }
-
-            // conflict with another job
-            $problem = new Problem;
-            $problem->addRule($rule);
-            $problem->addRule($conflict);
 
             // push all of our rules (can only be job rules)
             // asserting this literal on the problem stack
@@ -217,7 +212,7 @@ class Solver
                 $this->decisions
             );
 
-            $this->propagateIndex++;
+            ++$this->propagateIndex;
 
             if ($conflict) {
                 return $conflict;
@@ -271,7 +266,7 @@ class Solver
      */
     private function setPropagateLearn($level, $literal, $disableRules, Rule $rule)
     {
-        $level++;
+        ++$level;
 
         $this->decisions->decide($literal, $level, $rule);
 
@@ -349,22 +344,23 @@ class Solver
             $this->learnedPool[count($this->learnedPool) - 1][] = $rule;
 
             foreach ($rule->getLiterals() as $literal) {
+                if (isset($seen[abs($literal)])) {
+                    continue;
+                }
+
                 // skip the one true literal
                 if ($this->decisions->satisfy($literal)) {
                     continue;
                 }
 
-                if (isset($seen[abs($literal)])) {
-                    continue;
-                }
                 $seen[abs($literal)] = true;
 
                 $l = $this->decisions->decisionLevel($literal);
 
                 if (1 === $l) {
-                    $l1num++;
+                    ++$l1num;
                 } elseif ($level === $l) {
-                    $num++;
+                    ++$num;
                 } else {
                     // not level1 or conflict level, add to new rule
                     $learnedLiterals[] = $literal;
@@ -391,20 +387,20 @@ class Solver
                         );
                     }
 
-                    $decisionId--;
+                    --$decisionId;
 
                     $decision = $this->decisions->atOffset($decisionId);
-                    $literal = $decision[Decisions::DECISION_LITERAL];
+                    $literal = abs($decision[Decisions::DECISION_LITERAL]);
 
-                    if (isset($seen[abs($literal)])) {
+                    if (isset($seen[$literal])) {
                         break;
                     }
                 }
 
-                unset($seen[abs($literal)]);
+                unset($seen[$literal]);
 
                 if ($num && 0 === --$num) {
-                    $learnedLiterals[0] = -abs($literal);
+                    $learnedLiterals[0] = -$literal;
 
                     if (!$l1num) {
                         break 2;
@@ -416,7 +412,7 @@ class Solver
                         }
                     }
                     // only level 1 marks left
-                    $l1num++;
+                    ++$l1num;
                     $l1retry = true;
                 }
             }
@@ -425,25 +421,23 @@ class Solver
             $rule = $decision[Decisions::DECISION_REASON];
         }
 
-        $why = count($this->learnedPool) - 1;
-
         if (!$learnedLiterals[0]) {
             throw new SolverBugException(
                 "Did not find a learnable literal in analyzed rule $analyzedRule."
             );
         }
 
+        $why = count($this->learnedPool) - 1;
+
         $newRule = new Rule($this->pool, $learnedLiterals, Rule::RULE_LEARNED, $why);
 
         return array($learnedLiterals[0], $ruleLevel, $newRule, $why);
     }
 
-    private function analyzeUnsolvableRule($problem, $conflictRule)
+    private function analyzeUnsolvableRule(Problem $problem, Rule $conflictRule)
     {
-        $why = $conflictRule->getId();
-
         if ($conflictRule->getType() == RuleSet::TYPE_LEARNED) {
-            $learnedWhy = $this->learnedWhy[$why];
+            $learnedWhy = $this->learnedWhy[$conflictRule->getId()];
             $problemRules = $this->learnedPool[$learnedWhy];
 
             foreach ($problemRules as $problemRule) {
@@ -462,7 +456,7 @@ class Solver
         $problem->addRule($conflictRule);
     }
 
-    private function analyzeUnsolvable($conflictRule, $disableRules)
+    private function analyzeUnsolvable(Rule $conflictRule, $disableRules)
     {
         $problem = new Problem;
         $problem->addRule($conflictRule);
@@ -591,16 +585,12 @@ class Solver
         //    * with step 1
         //    */
 
-        $decisionQueue = array();
-        $decisionSupplementQueue = array();
         $disableRules = array();
 
         $level = 1;
         $systemLevel = $level + 1;
-        $installedPos = 0;
 
         while (true) {
-
             if (1 === $level) {
                 $conflictRule = $this->propagate($level);
                 if (null !== $conflictRule) {
@@ -676,17 +666,18 @@ class Solver
                 $systemLevel = $level;
             }
 
-            for ($i = 0, $n = 0; $n < count($this->rules); $i++, $n++) {
-                if ($i == count($this->rules)) {
+            $countRules = count($this->rules);
+            for ($i = 0, $n = 0; $n < $countRules; $i++, $n++) {
+                if ($i === $countRules) {
                     $i = 0;
                 }
 
                 $rule = $this->rules->ruleById($i);
-                $literals = $rule->getLiterals();
-
                 if ($rule->isDisabled()) {
                     continue;
                 }
+
+                $literals = $rule->getLiterals();
 
                 $decisionQueue = array();
 
@@ -716,7 +707,6 @@ class Solver
                     continue;
                 }
 
-                $oLevel = $level;
                 $level = $this->selectAndInstall($level, $decisionQueue, $disableRules, $rule);
 
                 if (0 === $level) {
@@ -733,12 +723,10 @@ class Solver
 
             // minimization step
             if (count($this->branches)) {
-
                 $lastLiteral = null;
                 $lastLevel = null;
                 $lastBranchIndex = 0;
                 $lastBranchOffset  = 0;
-                $l = 0;
 
                 for ($i = count($this->branches) - 1; $i >= 0; $i--) {
                     list($literals, $l) = $this->branches[$i];
@@ -755,14 +743,12 @@ class Solver
 
                 if ($lastLiteral) {
                     unset($this->branches[$lastBranchIndex][self::BRANCH_LITERALS][$lastBranchOffset]);
-                    array_values($this->branches[$lastBranchIndex][self::BRANCH_LITERALS]);
 
                     $level = $lastLevel;
                     $this->revert($level);
 
                     $why = $this->decisions->lastReason();
 
-                    $oLevel = $level;
                     $level = $this->setPropagateLearn($level, $lastLiteral, $disableRules, $why);
 
                     if ($level == 0) {

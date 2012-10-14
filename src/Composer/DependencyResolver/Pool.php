@@ -43,7 +43,7 @@ class Pool
     protected $composerRepos = array();
     protected $packages = array();
     protected $packageByName = array();
-    protected $acceptableStabilities;
+    protected $acceptableStabilities = array();
     protected $stabilityFlags;
     protected $versionParser;
     protected $providerCache = array();
@@ -51,9 +51,7 @@ class Pool
 
     public function __construct($minimumStability = 'stable', array $stabilityFlags = array())
     {
-        $stabilities = BasePackage::$stabilities;
         $this->versionParser = new VersionParser;
-        $this->acceptableStabilities = array();
         foreach (BasePackage::$stabilities as $stability => $value) {
             if ($value <= BasePackage::$stabilities[$minimumStability]) {
                 $this->acceptableStabilities[$stability] = $value;

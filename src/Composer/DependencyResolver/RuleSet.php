@@ -29,22 +29,14 @@ class RuleSet implements \IteratorAggregate, \Countable
         self::TYPE_LEARNED => 'LEARNED',
     );
 
-    protected $rules;
-    protected $ruleById;
-    protected $nextRuleId;
-
-    protected $rulesByHash;
-
-    public function __construct()
-    {
-        $this->nextRuleId = 0;
-
-        foreach ($this->getTypes() as $type) {
-            $this->rules[$type] = array();
-        }
-
-        $this->rulesByHash = array();
-    }
+    protected $rules = array(
+        self::TYPE_PACKAGE => array(),
+        self::TYPE_JOB     => array(),
+        self::TYPE_LEARNED => array(),
+    );
+    protected $rulesByHash = array();
+    protected $ruleById = array();
+    protected $nextRuleId = 0;
 
     public function add(Rule $rule, $type)
     {
@@ -124,10 +116,7 @@ class RuleSet implements \IteratorAggregate, \Countable
 
     public function getTypes()
     {
-        $types = self::$types;
-        unset($types[-1]);
-
-        return array_keys($types);
+        return array_keys($this->rules);
     }
 
     public function containsEqual($rule)

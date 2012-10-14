@@ -31,14 +31,12 @@ class RuleWatchNode
      *
      * @param Rule $rule The rule to wrap
      */
-    public function __construct($rule)
+    public function __construct(Rule $rule)
     {
         $this->rule = $rule;
 
-        $literals = $rule->getLiterals();
-
-        $this->watch1 = count($literals) > 0 ? $literals[0] : 0;
-        $this->watch2 = count($literals) > 1 ? $literals[1] : 0;
+        $this->watch1 = $rule->getLiteralsCount() > 0 ? current($rule->getLiterals()) : 0;
+        $this->watch2 = $rule->getLiteralsCount() > 1 ? next($rule->getLiterals()) : 0;
     }
 
     /**
@@ -83,16 +81,16 @@ class RuleWatchNode
     /**
      * Given one watched literal, this method returns the other watched literal
      *
-     * @param int The watched literal that should not be returned
+     * @param int $literal The watched literal that should not be returned
      * @return int A literal
      */
     public function getOtherWatch($literal)
     {
         if ($this->watch1 == $literal) {
             return $this->watch2;
-        } else {
-            return $this->watch1;
         }
+
+        return $this->watch1;
     }
 
     /**
