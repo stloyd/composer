@@ -12,16 +12,16 @@
 
 namespace Composer\Installer;
 
-use Composer\Package\PackageInterface;
-use Composer\Package\AliasPackage;
-use Composer\Repository\RepositoryInterface;
-use Composer\Repository\InstalledRepositoryInterface;
-use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\DependencyResolver\Operation\InstallOperation;
-use Composer\DependencyResolver\Operation\UpdateOperation;
-use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\DependencyResolver\Operation\MarkAliasInstalledOperation;
 use Composer\DependencyResolver\Operation\MarkAliasUninstalledOperation;
+use Composer\DependencyResolver\Operation\OperationInterface;
+use Composer\DependencyResolver\Operation\UninstallOperation;
+use Composer\DependencyResolver\Operation\UpdateOperation;
+use Composer\Package\AliasPackage;
+use Composer\Package\PackageInterface;
+use Composer\Repository\InstalledRepositoryInterface;
+use Composer\Repository\RepositoryInterface;
 use Composer\Util\StreamContextFactory;
 
 /**
@@ -90,7 +90,7 @@ class InstallationManager
      *
      * @return InstallerInterface
      *
-     * @throws InvalidArgumentException if installer for provided type is not registered
+     * @throws \InvalidArgumentException if installer for provided type is not registered
      */
     public function getInstaller($type)
     {

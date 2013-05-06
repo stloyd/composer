@@ -138,7 +138,7 @@ class FileDownloader implements DownloaderInterface
                 }
             }
 
-            if (!file_exists($fileName)) {
+            if (!is_file($fileName)) {
                 throw new \UnexpectedValueException($url.' could not be saved to '.$fileName.', make sure the'
                     .' directory is writable and you have internet connectivity');
             }
@@ -168,7 +168,6 @@ class FileDownloader implements DownloaderInterface
     protected function clearCache(PackageInterface $package, $path)
     {
         if ($this->cache) {
-            $fileName = $this->getFileName($package, $path);
             $this->cache->remove($this->getCacheKey($package));
         }
     }

@@ -34,7 +34,7 @@ class Filesystem
             return $this->removeDirectory($file);
         }
 
-        if (file_exists($file)) {
+        if (is_file($file)) {
             return unlink($file);
         }
 

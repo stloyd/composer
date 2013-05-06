@@ -30,13 +30,13 @@ class GitExcludeFilter extends BaseExcludeFilter
     {
         parent::__construct($sourcePath);
 
-        if (file_exists($sourcePath.'/.gitignore')) {
+        if (is_file($sourcePath.'/.gitignore')) {
             $this->excludePatterns = $this->parseLines(
                 file($sourcePath.'/.gitignore'),
                 array($this, 'parseGitIgnoreLine')
             );
         }
-        if (file_exists($sourcePath.'/.gitattributes')) {
+        if (is_file($sourcePath.'/.gitattributes')) {
             $this->excludePatterns = array_merge(
                 $this->excludePatterns,
                 $this->parseLines(

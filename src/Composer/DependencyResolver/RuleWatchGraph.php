@@ -24,6 +24,9 @@ namespace Composer\DependencyResolver;
  */
 class RuleWatchGraph
 {
+    /**
+     * @var RuleWatchChain[]
+     */
     protected $watchChains = array();
 
     /**
@@ -127,11 +130,11 @@ class RuleWatchGraph
      *
      * The rule node's watched literals are updated accordingly.
      *
-     * @param $fromLiteral A literal the node used to watch
-     * @param $toLiteral A literal the node should watch now
-     * @param $node The rule node to be moved
+     * @param string        $fromLiteral A literal the node used to watch
+     * @param string        $toLiteral   A literal the node should watch now
+     * @param RuleWatchNode $node        The rule node to be moved
      */
-    protected function moveWatch($fromLiteral, $toLiteral, $node)
+    protected function moveWatch($fromLiteral, $toLiteral, RuleWatchNode $node)
     {
         if (!isset($this->watchChains[$toLiteral])) {
             $this->watchChains[$toLiteral] = new RuleWatchChain;

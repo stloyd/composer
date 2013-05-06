@@ -22,6 +22,9 @@ class Decisions implements \Iterator, \Countable
     const DECISION_LITERAL = 0;
     const DECISION_REASON = 1;
 
+    /**
+     * @var Pool
+     */
     protected $pool;
     protected $decisionMap;
     protected $decisionQueue = array();
@@ -92,7 +95,7 @@ class Decisions implements \Iterator, \Countable
     {
         $packageId = abs($literalOrPackageId);
 
-        foreach ($this->decisionQueue as $i => $decision) {
+        foreach ($this->decisionQueue as $decision) {
             if ($packageId === abs($decision[self::DECISION_LITERAL])) {
                 return $decision[self::DECISION_REASON];
             }

@@ -12,7 +12,6 @@
 
 namespace Composer\Package;
 
-use Composer\Package\LinkConstraint\VersionConstraint;
 use Composer\Package\Version\VersionParser;
 
 /**

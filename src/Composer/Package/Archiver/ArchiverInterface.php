@@ -12,8 +12,6 @@
 
 namespace Composer\Package\Archiver;
 
-use Composer\Package\PackageInterface;
-
 /**
  * @author Till Klampaeckel <till@php.net>
  * @author Matthieu Moquet <matthieu@moquet.net>

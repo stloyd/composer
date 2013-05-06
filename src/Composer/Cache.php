@@ -62,7 +62,7 @@ class Cache
     public function read($file)
     {
         $file = preg_replace('{[^'.$this->whitelist.']}i', '-', $file);
-        if ($this->enabled && file_exists($this->root . $file)) {
+        if ($this->enabled && is_file($this->root . $file)) {
             return file_get_contents($this->root . $file);
         }
 
@@ -95,7 +95,7 @@ class Cache
     public function copyTo($file, $target)
     {
         $file = preg_replace('{[^'.$this->whitelist.']}i', '-', $file);
-        if ($this->enabled && file_exists($this->root . $file)) {
+        if ($this->enabled && is_file($this->root . $file)) {
             touch($this->root . $file);
 
             return copy($this->root . $file, $target);
@@ -107,7 +107,7 @@ class Cache
     public function remove($file)
     {
         $file = preg_replace('{[^'.$this->whitelist.']}i', '-', $file);
-        if ($this->enabled && file_exists($this->root . $file)) {
+        if ($this->enabled && is_file($this->root . $file)) {
             return unlink($this->root . $file);
         }
 
@@ -141,7 +141,7 @@ class Cache
     public function sha1($file)
     {
         $file = preg_replace('{[^'.$this->whitelist.']}i', '-', $file);
-        if ($this->enabled && file_exists($this->root . $file)) {
+        if ($this->enabled && is_file($this->root . $file)) {
             return sha1_file($this->root . $file);
         }
 
@@ -151,7 +151,7 @@ class Cache
     public function sha256($file)
     {
         $file = preg_replace('{[^'.$this->whitelist.']}i', '-', $file);
-        if ($this->enabled && file_exists($this->root . $file)) {
+        if ($this->enabled && is_file($this->root . $file)) {
             return hash_file('sha256', $this->root . $file);
         }
 

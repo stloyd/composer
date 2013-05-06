@@ -12,7 +12,6 @@
 
 namespace Composer\Json;
 
-use Composer\Composer;
 use JsonSchema\Validator;
 use Seld\JsonLint\JsonParser;
 use Seld\JsonLint\ParsingException;
@@ -42,6 +41,8 @@ class JsonFile
      *
      * @param string           $path path to a lockfile
      * @param RemoteFilesystem $rfs  required for loading http/https json files
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($path, RemoteFilesystem $rfs = null)
     {
@@ -75,6 +76,8 @@ class JsonFile
      * Reads json file.
      *
      * @return mixed
+     *
+     * @throws \RuntimeException
      */
     public function read()
     {
@@ -98,6 +101,8 @@ class JsonFile
      *
      * @param array $hash    writes hash into json file
      * @param int   $options json_encode options (defaults to JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+     *
+     * @throws \UnexpectedValueException
      */
     public function write(array $hash, $options = 448)
     {
@@ -122,7 +127,7 @@ class JsonFile
      *
      * @param  int                       $schema a JsonFile::*_SCHEMA constant
      * @return bool                      true on success
-     * @throws \UnexpectedValueException
+     * @throws JsonValidationException
      */
     public function validateSchema($schema = self::STRICT_SCHEMA)
     {
@@ -290,7 +295,7 @@ class JsonFile
      * @param  string                    $file
      * @return bool                      true on success
      * @throws \UnexpectedValueException
-     * @throws JsonValidationException
+     * @throws ParsingException
      */
     protected static function validateSyntax($json, $file = null)
     {

@@ -23,6 +23,8 @@ use Symfony\Component\Process\Process;
  */
 class Compiler
 {
+    protected $version;
+
     /**
      * Compiles composer into a single phar file
      *

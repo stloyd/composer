@@ -13,7 +13,6 @@
 namespace Composer\Package\Archiver;
 
 use Composer\Package\BasePackage;
-use Composer\Package\PackageInterface;
 
 /**
  * @author Till Klampaeckel <till@php.net>

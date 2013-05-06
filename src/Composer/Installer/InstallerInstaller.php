@@ -13,11 +13,10 @@
 namespace Composer\Installer;
 
 use Composer\Composer;
-use Composer\Package\Package;
 use Composer\IO\IOInterface;
-use Composer\Autoload\AutoloadGenerator;
-use Composer\Repository\InstalledRepositoryInterface;
+use Composer\Package\Package;
 use Composer\Package\PackageInterface;
+use Composer\Repository\InstalledRepositoryInterface;
 
 /**
  * Installer installation manager.

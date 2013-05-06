@@ -43,7 +43,7 @@ class Transaction
         $installMap = array();
         $uninstallMap = array();
 
-        foreach ($this->decisions as $i => $decision) {
+        foreach ($this->decisions as $decision) {
             $literal = $decision[Decisions::DECISION_LITERAL];
             $reason = $decision[Decisions::DECISION_REASON];
 
@@ -77,7 +77,7 @@ class Transaction
             }
         }
 
-        foreach ($this->decisions as $i => $decision) {
+        foreach ($this->decisions as $decision) {
             $literal = $decision[Decisions::DECISION_LITERAL];
             $package = $this->pool->literalToPackage($literal);
 
@@ -179,7 +179,7 @@ class Transaction
     {
         $installMeansUpdateMap = array();
 
-        foreach ($this->decisions as $i => $decision) {
+        foreach ($this->decisions as $decision) {
             $literal = $decision[Decisions::DECISION_LITERAL];
             $package = $this->pool->literalToPackage($literal);
 

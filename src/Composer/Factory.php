@@ -217,7 +217,6 @@ class Factory
         }
 
         $vendorDir = $config->get('vendor-dir');
-        $binDir = $config->get('bin-dir');
 
         // setup process timeout
         ProcessExecutor::setTimeout((int) $config->get('process-timeout'));

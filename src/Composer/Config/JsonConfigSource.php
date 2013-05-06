@@ -24,7 +24,6 @@ use Composer\Json\JsonManipulator;
 class JsonConfigSource implements ConfigSourceInterface
 {
     private $file;
-    private $manipulator;
 
     /**
      * Constructor

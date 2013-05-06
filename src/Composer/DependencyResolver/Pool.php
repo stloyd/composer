@@ -12,18 +12,18 @@
 
 namespace Composer\DependencyResolver;
 
-use Composer\Package\BasePackage;
 use Composer\Package\AliasPackage;
-use Composer\Package\Version\VersionParser;
-use Composer\Package\Link;
+use Composer\Package\BasePackage;
 use Composer\Package\LinkConstraint\LinkConstraintInterface;
 use Composer\Package\LinkConstraint\VersionConstraint;
-use Composer\Repository\RepositoryInterface;
-use Composer\Repository\CompositeRepository;
+use Composer\Package\PackageInterface;
+use Composer\Package\Version\VersionParser;
 use Composer\Repository\ComposerRepository;
+use Composer\Repository\CompositeRepository;
 use Composer\Repository\InstalledRepositoryInterface;
-use Composer\Repository\StreamableRepositoryInterface;
 use Composer\Repository\PlatformRepository;
+use Composer\Repository\RepositoryInterface;
+use Composer\Repository\StreamableRepositoryInterface;
 
 /**
  * A package pool contains repositories that provide packages.
@@ -51,7 +51,6 @@ class Pool
 
     public function __construct($minimumStability = 'stable', array $stabilityFlags = array())
     {
-        $stabilities = BasePackage::$stabilities;
         $this->versionParser = new VersionParser;
         $this->acceptableStabilities = array();
         foreach (BasePackage::$stabilities as $stability => $value) {
@@ -155,6 +154,7 @@ class Pool
                     }
                 }
             } else {
+                /* @var $package PackageInterface */
                 foreach ($repo->getPackages() as $package) {
                     $names = $package->getNames();
                     $stability = $package->getStability();
@@ -237,6 +237,7 @@ class Pool
         $candidates = array();
 
         foreach ($this->providerRepos as $repo) {
+            /* @var $candidate PackageInterface */
             foreach ($repo->whatProvides($this, $name) as $candidate) {
                 $candidates[] = $candidate;
                 if ($candidate->getId() < 1) {
@@ -341,6 +342,7 @@ class Pool
     private function ensurePackageIsLoaded($data)
     {
         if (is_array($data)) {
+            /* @var $package PackageInterface */
             if (isset($data['alias_of'])) {
                 $aliasOf = $this->packageById($data['alias_of']);
                 $package = $this->packages[$data['id'] - 1] = $data['repo']->loadAliasPackage($data, $aliasOf);

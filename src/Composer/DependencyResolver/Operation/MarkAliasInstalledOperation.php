@@ -26,8 +26,8 @@ class MarkAliasInstalledOperation extends SolverOperation
     /**
      * Initializes operation.
      *
-     * @param PackageInterface $package package instance
-     * @param string           $reason  operation reason
+     * @param AliasPackage $package package instance
+     * @param string       $reason  operation reason
      */
     public function __construct(AliasPackage $package, $reason = null)
     {
@@ -39,7 +39,7 @@ class MarkAliasInstalledOperation extends SolverOperation
     /**
      * Returns package instance.
      *
-     * @return PackageInterface
+     * @return AliasPackage
      */
     public function getPackage()
     {

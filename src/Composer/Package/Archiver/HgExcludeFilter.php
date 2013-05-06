@@ -41,7 +41,7 @@ class HgExcludeFilter extends BaseExcludeFilter
 
         $this->patternMode = self::HG_IGNORE_REGEX;
 
-        if (file_exists($sourcePath.'/.hgignore')) {
+        if (is_file($sourcePath.'/.hgignore')) {
             $this->excludePatterns = $this->parseLines(
                 file($sourcePath.'/.hgignore'),
                 array($this, 'parseHgIgnoreLine')

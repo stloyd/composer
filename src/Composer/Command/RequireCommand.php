@@ -54,7 +54,7 @@ EOT
     {
         $file = Factory::getComposerFile();
 
-        if (!file_exists($file) && !file_put_contents($file, "{\n}\n")) {
+        if (!is_file($file) && !file_put_contents($file, "{\n}\n")) {
             $output->writeln('<error>'.$file.' could not be created.</error>');
 
             return 1;
@@ -69,8 +69,6 @@ EOT
 
             return 1;
         }
-
-        $dialog = $this->getHelperSet()->get('dialog');
 
         $json = new JsonFile($file);
         $composer = $json->read();

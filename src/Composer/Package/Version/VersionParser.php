@@ -89,6 +89,8 @@ class VersionParser
      * @param  string $version
      * @param  string $fullVersion optional complete version string to give more context
      * @return array
+     *
+     * @throws \UnexpectedValueException
      */
     public function normalize($version, $fullVersion = null)
     {

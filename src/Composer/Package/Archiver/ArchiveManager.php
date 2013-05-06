@@ -13,8 +13,6 @@
 namespace Composer\Package\Archiver;
 
 use Composer\Downloader\DownloadManager;
-use Composer\Factory;
-use Composer\IO\NullIO;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackage;
 use Composer\Util\Filesystem;
@@ -97,6 +95,9 @@ class ArchiveManager
      * @param string           $targetDir The diretory where to build the archive
      *
      * @return string The path of the created archive
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function archive(PackageInterface $package, $format, $targetDir)
     {

@@ -12,7 +12,7 @@
 
 function includeIfExists($file)
 {
-    if (file_exists($file)) {
+    if (is_file($file)) {
         return include $file;
     }
 }

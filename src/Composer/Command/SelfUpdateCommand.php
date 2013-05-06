@@ -54,7 +54,7 @@ EOT
 
             $rfs->copy('getcomposer.org', $remoteFilename, $tempFilename);
 
-            if (!file_exists($tempFilename)) {
+            if (!is_file($tempFilename)) {
                 $output->writeln('<error>The download of the new composer version failed for an unexpected reason');
 
                 return 1;

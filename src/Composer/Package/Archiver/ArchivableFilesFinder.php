@@ -29,7 +29,7 @@ use Symfony\Component\Finder;
 class ArchivableFilesFinder extends \FilterIterator
 {
     /**
-     * @var Symfony\Component\Finder\Finder
+     * @var \Symfony\Component\Finder\Finder
      */
     protected $finder;
 

@@ -76,6 +76,11 @@ class RuleSet implements \IteratorAggregate, \Countable
         return $this->nextRuleId;
     }
 
+    /**
+     * @param integer $id
+     *
+     * @return Rule
+     */
     public function ruleById($id)
     {
         return $this->ruleById[$id];
@@ -130,7 +135,7 @@ class RuleSet implements \IteratorAggregate, \Countable
         return array_keys($types);
     }
 
-    public function containsEqual($rule)
+    public function containsEqual(Rule $rule)
     {
         if (isset($this->rulesByHash[$rule->getHash()])) {
             $potentialDuplicates = $this->rulesByHash[$rule->getHash()];

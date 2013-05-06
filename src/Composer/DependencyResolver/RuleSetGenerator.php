@@ -22,8 +22,12 @@ class RuleSetGenerator
 {
     protected $policy;
     protected $pool;
+    /**
+     * @var RuleSet
+     */
     protected $rules;
     protected $jobs;
+    protected $addedMap;
     protected $installedMap;
 
     public function __construct(PolicyInterface $policy, Pool $pool)
@@ -38,11 +42,11 @@ class RuleSetGenerator
      * This rule is of the form (-A|B|C), where B and C are the providers of
      * one requirement of the package A.
      *
-     * @param PackageInterface $package   The package with a requirement
-     * @param array            $providers The providers of the requirement
-     * @param int              $reason    A RULE_* constant describing the
+     * @param PackageInterface $package    The package with a requirement
+     * @param array            $providers  The providers of the requirement
+     * @param integer          $reason     A RULE_* constant describing the
      *                                     reason for generating this rule
-     * @param mixed $reasonData Any data, e.g. the requirement name,
+     * @param mixed            $reasonData Any data, e.g. the requirement name,
      *                                     that goes with the reason
      * @return Rule The generated rule or null if tautological
      */
@@ -67,10 +71,10 @@ class RuleSetGenerator
      * The rule is (A|B|C) with A, B and C different packages. If the given
      * set of packages is empty an impossible rule is generated.
      *
-     * @param array $packages The set of packages to choose from
-     * @param int   $reason   A RULE_* constant describing the reason for
-     *                            generating this rule
-     * @param  array $job The job this rule was created from
+     * @param PackageInterface[] $packages The set of packages to choose from
+     * @param integer            $reason   A RULE_* constant describing the reason for
+     *                                     generating this rule
+     * @param  array             $job      The job this rule was created from
      * @return Rule  The generated rule
      */
     protected function createInstallOneOfRule(array $packages, $reason, $job)
@@ -89,9 +93,9 @@ class RuleSetGenerator
      * The rule for a package A is (-A).
      *
      * @param PackageInterface $package The package to be removed
-     * @param int              $reason  A RULE_* constant describing the
-     *                                     reason for generating this rule
-     * @param  array $job The job this rule was created from
+     * @param integer          $reason  A RULE_* constant describing the
+     *                                  reason for generating this rule
+     * @param  array           $job     The job this rule was created from
      * @return Rule  The generated rule
      */
     protected function createRemoveRule(PackageInterface $package, $reason, $job)
@@ -105,11 +109,11 @@ class RuleSetGenerator
      * The rule for conflicting packages A and B is (-A|-B). A is called the issuer
      * and B the provider.
      *
-     * @param PackageInterface $issuer   The package declaring the conflict
-     * @param PackageInterface $provider The package causing the conflict
-     * @param int              $reason   A RULE_* constant describing the
+     * @param PackageInterface $issuer     The package declaring the conflict
+     * @param PackageInterface $provider   The package causing the conflict
+     * @param integer          $reason     A RULE_* constant describing the
      *                                     reason for generating this rule
-     * @param mixed $reasonData Any data, e.g. the package name, that
+     * @param mixed            $reasonData Any data, e.g. the package name, that
      *                                     goes with the reason
      * @return Rule The generated rule
      */
@@ -129,8 +133,8 @@ class RuleSetGenerator
      * To be able to directly pass in the result of one of the rule creation
      * methods null is allowed which will not insert a rule.
      *
-     * @param int  $type    A TYPE_* constant defining the rule type
-     * @param Rule $newRule The rule about to be added
+     * @param integer $type    A TYPE_* constant defining the rule type
+     * @param Rule    $newRule The rule about to be added
      */
     private function addRule($type, Rule $newRule = null)
     {
@@ -207,7 +211,7 @@ class RuleSetGenerator
         }
     }
 
-    protected function obsoleteImpossibleForAlias($package, $provider)
+    protected function obsoleteImpossibleForAlias(PackageInterface $package, $provider)
     {
         $packageIsAlias = $package instanceof AliasPackage;
         $providerIsAlias = $provider instanceof AliasPackage;

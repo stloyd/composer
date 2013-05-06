@@ -12,6 +12,8 @@
 
 namespace Composer\DependencyResolver;
 
+use Composer\Package\LinkConstraint\LinkConstraintInterface;
+
 /**
  * Represents a problem detected while solving dependencies
  *
@@ -67,6 +69,8 @@ class Problem
      * A human readable textual representation of the problem's reasons
      *
      * @param array $installedMap A map of all installed packages
+     *
+     * @return string
      */
     public function getPrettyString(array $installedMap = array())
     {
@@ -76,7 +80,6 @@ class Problem
             reset($reasons);
             $reason = current($reasons);
 
-            $rule = $reason['rule'];
             $job = $reason['job'];
 
             if ($job && $job['cmd'] === 'install' && empty($job['packages'])) {
@@ -90,8 +93,6 @@ class Problem
 
                 // handle linked libs
                 if (0 === stripos($job['packageName'], 'lib-')) {
-                    $lib = substr($job['packageName'], 4);
-
                     return "\n    - The requested linked library ".$job['packageName'].$this->constraintToText($job['constraint']).' has the wrong version installed or is missing from your system, make sure to have the extension providing it.';
                 }
 
@@ -187,7 +188,7 @@ class Problem
     /**
      * Turns a constraint into text usable in a sentence describing a job
      *
-     * @param  LinkConstraint $constraint
+     * @param  LinkConstraintInterface $constraint
      * @return string
      */
     protected function constraintToText($constraint)

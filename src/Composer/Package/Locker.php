@@ -89,6 +89,8 @@ class Locker
      *
      * @param  bool                                     $withDevReqs true to retrieve the locked dev packages
      * @return \Composer\Repository\RepositoryInterface
+     *
+     * @throws \RuntimeException
      */
     public function getLockedRepository($withDevReqs = false)
     {
@@ -254,6 +256,7 @@ class Locker
     {
         $locked = array();
 
+        /* @var $package PackageInterface */
         foreach ($packages as $package) {
             if ($package instanceof AliasPackage) {
                 continue;

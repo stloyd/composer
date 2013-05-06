@@ -53,7 +53,7 @@ EOT
     {
         $file = $input->getArgument('file');
 
-        if (!file_exists($file)) {
+        if (!is_file($file)) {
             $output->writeln('<error>' . $file . ' not found.</error>');
 
             return 1;

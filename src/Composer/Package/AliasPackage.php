@@ -23,10 +23,14 @@ class AliasPackage extends BasePackage implements CompletePackageInterface
     protected $version;
     protected $prettyVersion;
     protected $dev;
+    /**
+     * @var CompletePackageInterface
+     */
     protected $aliasOf;
     protected $rootPackageAlias = false;
     protected $stability;
 
+    protected $devRequires;
     protected $requires;
     protected $conflicts;
     protected $provides;

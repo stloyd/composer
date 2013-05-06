@@ -282,8 +282,6 @@ EOT
 
     protected function findPackages($name)
     {
-        $packages = array();
-
         // init repos
         if (!$this->repos) {
             $this->repos = new CompositeRepository(array_merge(
@@ -451,7 +449,7 @@ EOT
      */
     protected function hasVendorIgnore($ignoreFile, $vendor = 'vendor')
     {
-        if (!file_exists($ignoreFile)) {
+        if (!is_file($ignoreFile)) {
             return false;
         }
 
@@ -477,7 +475,7 @@ EOT
     protected function addVendorIgnore($ignoreFile, $vendor = '/vendor/')
     {
         $contents = "";
-        if (file_exists($ignoreFile)) {
+        if (is_file($ignoreFile)) {
             $contents = file_get_contents($ignoreFile);
 
             if ("\n" !== substr($contents, 0, -1)) {
